@@ -1,9 +1,0 @@
-#!/bin/sh
-length=${2:-10}
-size=`expr ${1:-1} \* $length`
-/usr/bin/gpg --armor --gen-random 1 "$size" \
-| tr -dc '0-9a-zA-Z' \
-| head -c "$size" \
-| sed -r -e "s/(.{$length})/\1\n/g"
-
-# vim:ft=sh ts=2 sw=2 et
