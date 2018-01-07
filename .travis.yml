@@ -13,6 +13,6 @@ install:
 - pip install pyflakes
 script:
 - ./password-manager generate 3
-- private/run-pyflakes
+- python3 -m pyflakes password-manager
 
 # vim:ts=2 sts=2 sw=2 et
