@@ -11,9 +11,12 @@ python:
 matrix:
   allow_failures:
   - python: "3.7-dev"
+before_install:
+- pyflakes=pyflakes
+- if [[ $TRAVIS_PYTHON_VERSION = 3.[23] ]]; then pyflakes='pyflakes<2'; fi
 install:
 - pip install PyYAML
-- pip install pydiatra pyflakes
+- pip install pydiatra $pyflakes
 script:
 - ./password-manager generate 3
 - python3 -m pydiatra password-manager
