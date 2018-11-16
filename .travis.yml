@@ -14,8 +14,8 @@ before_install:
 - pyyaml=pyyaml
 - if [[ $TRAVIS_PYTHON_VERSION = 3.2 ]]; then pyyaml='pyyaml<3.13'; fi
 install:
-- pip install $pyyaml
-- pip install pydiatra $pyflakes
+- python3 -m pip install $pyyaml
+- python3 -m pip install pydiatra $pyflakes
 script:
 - ./password-manager generate 3
 - python3 -m pydiatra password-manager
