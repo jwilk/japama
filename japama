@@ -36,6 +36,7 @@ def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
     subparsers.dest = 'cmd'  # https://bugs.python.org/issue9253
+    subparsers.metavar = 'COMMAND'
     subparsers.required = True
     def add_command(command, *, help):
         name = re.sub('^do_', '', command.__name__)
