@@ -118,8 +118,6 @@ def do_show(options):
             continue
         password = str(item['password'])
         password = pick_filter(password)
-        if '#' in password:
-            continue
         user = str(item.get('user', '<none>'))
         xclip = None
         if options.omit:
