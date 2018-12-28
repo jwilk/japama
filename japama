@@ -62,7 +62,7 @@ def main():
     )
     c_show.add_argument('keyword', metavar='KEYWORD')
     c_generate = add_command(do_generate, help='generate passwords')
-    c_generate.add_argument('--length', default=12, type=int, help='password length (default: 12)')
+    c_generate.add_argument('--length', default=16, type=int, help='password length (default: 16)')
     c_generate.add_argument('count', metavar='COUNT', nargs='?', type=int, help='number of passwords to generate')
     options = parser.parse_args()
     return options.action(options)
