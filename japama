@@ -116,7 +116,10 @@ def do_show(options):
         site = str(item['site'])
         if options.keyword not in site:
             continue
-        password = str(item['password'])
+        try:
+            password = str(item['password'])
+        except KeyError:
+            continue
         password = pick_filter(password)
         user = str(item.get('user', '<none>'))
         xclip = None
