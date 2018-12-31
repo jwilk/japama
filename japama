@@ -21,6 +21,8 @@
 # SOFTWARE.
 
 import argparse
+import configparser
+import io
 import math
 import os
 import random
@@ -29,8 +31,6 @@ import string
 import subprocess as ipc
 import sys
 import textwrap
-
-import yaml
 
 def main():
     parser = argparse.ArgumentParser()
@@ -94,16 +94,16 @@ def parse_pick(s):
 def do_show(options):
     '''
     Read password file from standard input and output (some) passwords.
-    The password file should be GPG-encrypted YAML file using the following
+    The password file should be GPG-encrypted config file using the following
     structure:
 
-       - site: https://example.net/
-         user: j.r.hacker
-         password: PnlUbPkPtq
+       [https://example.net/]
+       user = j.r.hacker
+       password = PnlUbPkPtq
 
-       - site: https://example.org/
-         user: jrh
-         password: cUUZ4oUXFv
+       [https://example.org/]
+       user = jrh
+       password = cUUZ4oUXFv
 
     '''
     try:
@@ -111,17 +111,19 @@ def do_show(options):
     except (IndexError, ValueError) as exc:
         fatal('cannot parse --pick argument: {exc}'.format(exc=exc))
     gpg = ipc.Popen(['gpg', '-q', '-d'], stdout=ipc.PIPE)
-    lines = yaml.safe_load(gpg.stdout)
-    for item in lines or []:
-        site = str(item['site'])
+    cp = configparser.RawConfigParser()
+    with io.TextIOWrapper(gpg.stdout, encoding='UTF-8') as fp:
+        cp.read_file(fp)
+    for site in cp.sections():
+        item = cp[site]
         if options.keyword not in site:
             continue
         try:
-            password = str(item['password'])
+            password = item['password']
         except KeyError:
             continue
         password = pick_filter(password)
-        user = str(item.get('user', '<none>'))
+        user = item.get('user', '<none>')
         xclip = None
         if options.omit:
             password = '<omitted>'
