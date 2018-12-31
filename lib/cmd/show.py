@@ -7,13 +7,11 @@ Show selected password(s).
 Configuration is read from <$XDG_DATA_HOME/japama/secrets.gpg>,
 an OpenPGP-encrypted file in the following format:
 
-   [https://example.net/]
-   user = j.r.hacker
+   [https://github.com/]
+   user = jwilk
    password = PnlUbPkPtqZvy2Po
-
-   [https://example.org/]
-   user = jrh
-   password = cUUZ4oUXFv4Cs2A5
+   # optional for TOTP (RFC 6238) support:
+   totp-secret = wxq3cgfxn77x7g7k
 
    ...
 
@@ -79,6 +77,11 @@ def run_xclip(x_selection, content):
     if xclip.wait() != 0:
         lib.cli.fatal('xclip failed')
 
+def get_totp(secret):
+    import pyotp.totp
+    totp = pyotp.totp.TOTP(secret)
+    return totp.now()
+
 def run(options):
     try:
         pick_filter = parse_pick(options.pick)
@@ -123,6 +126,14 @@ def run(options):
         print('password', '=', password)
         if x_selection:
             run_xclip(x_selection, orig_password)
+        totp_secret = item.get('totp-secret')
+        if totp_secret:
+            password = orig_password = get_totp(totp_secret)
+            if x_selection:
+                password = '<in-x-{sel}>'.format(sel=x_selection)
+            print('otp', '=', password)
+            if x_selection:
+                run_xclip(x_selection, orig_password)
         print()
 
 __all__ = [
