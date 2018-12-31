@@ -28,8 +28,6 @@ import lib.conf
 
 def add_arg_parser(subparsers):
     ap = subparsers.add_parser('show', help='show selected password(s)', description=__doc__)
-    ap.add_argument('--omit', action='store_true', help='omit passwords')
-    ap.add_argument('--pick', metavar='N[,N...]', help='pick only some characters')
     group = ap.add_mutually_exclusive_group()
     group.add_argument('-x', '--x-selection',
         dest='x_selection', action='store_const', const='primary',
@@ -39,7 +37,10 @@ def add_arg_parser(subparsers):
         dest='x_selection', action='store_const', const='clipboard',
         help='copy the password X clipboard'
     )
-    ap.add_argument('--robot', action='store_true', help='use machine-readable output')
+    ag = ap.add_mutually_exclusive_group()
+    ag.add_argument('--omit', action='store_true', help='omit passwords')
+    ag.add_argument('--pick', metavar='N[,N...]', help='pick only some characters')
+    ag.add_argument('--robot', action='store_true', help='use machine-readable output')
     ap.add_argument('keyword', metavar='KEYWORD')
     return ap
 
