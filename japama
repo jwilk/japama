@@ -132,12 +132,11 @@ def do_show(options):
             x_selection = options.x_selection
             options.x_selection = None
             options.omit = True
-            with open(os.devnull, 'w') as dev_null:
-                cmdline = ['xclip', '-selection', x_selection, '-l', '1', '-verbose']
-                xclip = ipc.Popen(cmdline,
-                    stdin=ipc.PIPE,
-                    stderr=dev_null,
-                )
+            cmdline = ['xclip', '-selection', x_selection, '-l', '1', '-verbose']
+            xclip = ipc.Popen(cmdline,
+                stdin=ipc.PIPE,
+                stderr=ipc.DEVNULL,
+            )
             xclip.stdin.write(password.encode('ASCII'))
             xclip.stdin.close()
             if x_selection == 'primary':
