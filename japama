@@ -92,9 +92,17 @@ def parse_pick(s):
         return ''.join(p[i] for i in lst)
     return pick_fn
 
+xdg_data_home = os.environ.get('XDG_DATA_HOME') or ''
+if not os.path.isabs(xdg_data_home):
+    xdg_data_home = os.path.expanduser('~/.local/share')
+
+config_path = os.path.join(xdg_data_home, 'japama', 'secrets.gpg')
+
 def do_show(options):
     '''
-    Read password file from standard input and output (some) passwords.
+    Read passwords from $XDG_DATA_HOME/japama/secrets.gpg and output some of
+    them.
+
     The password file should be GPG-encrypted config file using the following
     structure:
 
@@ -111,7 +119,8 @@ def do_show(options):
         pick_filter = parse_pick(options.pick)
     except (IndexError, ValueError) as exc:
         fatal('cannot parse --pick argument: {exc}'.format(exc=exc))
-    gpg = ipc.Popen(['gpg', '-q', '-d'], stdout=ipc.PIPE)
+    with open(config_path, 'rb') as fp:
+        gpg = ipc.Popen(['gpg', '-q', '-d'], stdin=fp, stdout=ipc.PIPE)
     cp = configparser.RawConfigParser()
     with io.TextIOWrapper(gpg.stdout, encoding='UTF-8') as fp:
         cp.read_file(fp)
