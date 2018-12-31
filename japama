@@ -35,8 +35,7 @@ import textwrap
 def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
-    subparsers.dest = 'cmd'  # https://bugs.python.org/issue9253
-    subparsers.metavar = 'COMMAND'
+    subparsers.dest = 'COMMAND'  # https://bugs.python.org/issue9253
     subparsers.required = True
     def add_command(command, *, help):
         name = re.sub('^do_', '', command.__name__)
