@@ -47,7 +47,7 @@ def main():
         )
         sp.set_defaults(action=command)
         return sp
-    c_show = add_command(do_show, help='show (some) passwords')
+    c_show = add_command(do_show, help='show selected password(s)')
     c_show.add_argument('--omit', action='store_true', help='omit passwords')
     c_show.add_argument('--pick', metavar='N[,N...]', help='pick only some characters')
     group = c_show.add_mutually_exclusive_group()
@@ -100,11 +100,10 @@ config_path = os.path.join(xdg_data_home, 'japama', 'secrets.gpg')
 
 def do_show(options):
     '''
-    Read passwords from $XDG_DATA_HOME/japama/secrets.gpg and output some of
-    them.
+    Show selected password(s).
 
-    The password file should be GPG-encrypted config file using the following
-    structure:
+    Configuration is read from <$XDG_DATA_HOME/japama/secrets.gpg>,
+    an OpenPGP-encrypted file in the following format:
 
        [https://example.net/]
        user = j.r.hacker
@@ -113,6 +112,8 @@ def do_show(options):
        [https://example.org/]
        user = jrh
        password = cUUZ4oUXFv4Cs2A5
+
+       ...
 
     '''
     try:
