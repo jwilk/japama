@@ -108,11 +108,11 @@ def do_show(options):
 
        [https://example.net/]
        user = j.r.hacker
-       password = PnlUbPkPtq
+       password = PnlUbPkPtqZvy2Po
 
        [https://example.org/]
        user = jrh
-       password = cUUZ4oUXFv
+       password = cUUZ4oUXFv4Cs2A5
 
     '''
     try:
