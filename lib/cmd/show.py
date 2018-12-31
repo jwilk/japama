@@ -89,6 +89,9 @@ def run(options):
     cp = configparser.RawConfigParser()
     with io.TextIOWrapper(gpg.stdout, encoding='UTF-8') as fp:
         cp.read_file(fp)
+    if gpg.wait() != 0:
+        lib.cli.cli.fatal('gpg failed')
+    gpg.stdout.close()
     if options.robot:
         item = cp[options.keyword]
         password = item['password']
@@ -121,9 +124,6 @@ def run(options):
         if x_selection:
             run_xclip(x_selection, orig_password)
         print()
-    if gpg.wait() != 0:
-        lib.cli.cli.fatal('gpg failed')
-    gpg.stdout.close()
 
 __all__ = [
     'add_arg_parser',
