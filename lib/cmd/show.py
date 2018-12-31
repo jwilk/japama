@@ -67,6 +67,18 @@ def parse_pick(s):
         return ''.join(p[i] for i in lst)
     return pick_fn
 
+def run_xclip(x_selection, content):
+    if isinstance(content, str):
+        content = content.encode('ASCII')
+    cmdline = ['xclip', '-selection', x_selection, '-l', '1', '-verbose']
+    xclip = ipc.Popen(cmdline,
+        stdin=ipc.PIPE,
+        stderr=ipc.DEVNULL,
+    )
+    xclip.communicate(content)
+    if xclip.wait() != 0:
+        lib.cli.fatal('xclip failed')
+
 def run(options):
     try:
         pick_filter = parse_pick(options.pick)
@@ -87,7 +99,7 @@ def run(options):
         if options.keyword not in site:
             continue
         try:
-            password = item['password']
+            orig_password = password = item['password']
         except KeyError:
             continue
         password = pick_filter(password)
@@ -97,24 +109,17 @@ def run(options):
         print('user', '=', user)
         if options.omit:
             password = '<omitted>'
-        elif options.x_selection:
+        x_selection = None
+        if options.x_selection:
             x_selection = options.x_selection
             options.x_selection = None
             options.omit = True
-            cmdline = ['xclip', '-selection', x_selection, '-l', '1', '-verbose']
-            xclip = ipc.Popen(cmdline,
-                stdin=ipc.PIPE,
-                stderr=ipc.DEVNULL,
-            )
-            xclip.stdin.write(password.encode('ASCII'))
-            xclip.stdin.close()
             if x_selection == 'primary':
                 x_selection += '-selection'
             password = '<in-x-{sel}>'.format(sel=x_selection)
         print('password', '=', password)
-        if xclip is not None:
-            if xclip.wait() != 0:
-                lib.cli.fatal('xclip failed')
+        if x_selection:
+            run_xclip(x_selection, orig_password)
         print()
     if gpg.wait() != 0:
         lib.cli.cli.fatal('gpg failed')
