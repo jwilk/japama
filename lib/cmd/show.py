@@ -93,6 +93,8 @@ def run(options):
         password = pick_filter(password)
         user = item.get('user', '<none>')
         xclip = None
+        print('[', site, ']', sep='')
+        print('user', '=', user)
         if options.omit:
             password = '<omitted>'
         elif options.x_selection:
@@ -109,12 +111,11 @@ def run(options):
             if x_selection == 'primary':
                 x_selection += '-selection'
             password = '<in-x-{sel}>'.format(sel=x_selection)
-        print('{site} ({user}) {password}'.format(
-            site=site, user=user, password=password)
-        )
+        print('password', '=', password)
         if xclip is not None:
             if xclip.wait() != 0:
                 lib.cli.fatal('xclip failed')
+        print()
     if gpg.wait() != 0:
         lib.cli.cli.fatal('gpg failed')
     gpg.stdout.close()
