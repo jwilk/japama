@@ -33,12 +33,12 @@ def add_arg_parser(subparsers):
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    group = ap.add_mutually_exclusive_group()
-    group.add_argument('-x', '--x-selection',
+    ag = ap.add_mutually_exclusive_group()
+    ag.add_argument('-x', '--x-selection',
         dest='x_selection', action='store_const', const='primary',
         help='copy the password to X primary selection'
     )
-    group.add_argument('--x-clipboard',
+    ag.add_argument('--x-clipboard',
         dest='x_selection', action='store_const', const='clipboard',
         help='copy the password to X clipboard'
     )
