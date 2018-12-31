@@ -88,7 +88,9 @@ def parse_pick(s):
         if l > r:
             raise IndexError('empty range: {l} > {r}'.format(l=l, r=r))
         lst += range(l - 1, r)
-    return lambda p: ''.join(p[i] for i in lst)
+    def pick_fn(p):
+        return ''.join(p[i] for i in lst)
+    return pick_fn
 
 def do_show(options):
     '''
