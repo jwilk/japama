@@ -31,11 +31,11 @@ def add_arg_parser(subparsers):
     group = ap.add_mutually_exclusive_group()
     group.add_argument('-x', '--x-selection',
         dest='x_selection', action='store_const', const='primary',
-        help='copy the password X primary selection'
+        help='copy the password to X primary selection'
     )
     group.add_argument('--x-clipboard',
         dest='x_selection', action='store_const', const='clipboard',
-        help='copy the password X clipboard'
+        help='copy the password to X clipboard'
     )
     ag = ap.add_mutually_exclusive_group()
     ag.add_argument('--omit', action='store_true', help='omit passwords')
