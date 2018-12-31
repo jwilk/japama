@@ -4,173 +4,20 @@
 # SPDX-License-Identifier: MIT
 
 import argparse
-import configparser
-import io
-import math
-import os
-import random
-import re
-import string
-import subprocess as ipc
-import sys
-import textwrap
+
+import lib.cmd.show
+import lib.cmd.generate
 
 def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
     subparsers.dest = 'COMMAND'  # https://bugs.python.org/issue9253
     subparsers.required = True
-    def add_command(command, *, help):
-        name = re.sub('^do_', '', command.__name__)
-        description = textwrap.dedent(command.__doc__)
-        sp = subparsers.add_parser(name,
-            help=help,
-            formatter_class=argparse.RawDescriptionHelpFormatter,
-            description=description,
-        )
-        sp.set_defaults(action=command)
-        return sp
-    c_show = add_command(do_show, help='show selected password(s)')
-    c_show.add_argument('--omit', action='store_true', help='omit passwords')
-    c_show.add_argument('--pick', metavar='N[,N...]', help='pick only some characters')
-    group = c_show.add_mutually_exclusive_group()
-    group.add_argument('-x', '--x-selection',
-        dest='x_selection', action='store_const', const='primary',
-        help='copy the password X primary selection'
-    )
-    group.add_argument('--x-clipboard',
-        dest='x_selection', action='store_const', const='clipboard',
-        help='copy the password X clipboard'
-    )
-    c_show.add_argument('keyword', metavar='KEYWORD')
-    c_generate = add_command(do_generate, help='generate passwords')
-    c_generate.add_argument('--length', default=16, type=int, help='password length (default: 16)')
-    c_generate.add_argument('count', metavar='COUNT', nargs='?', type=int, help='number of passwords to generate')
+    for cmd in lib.cmd.show, lib.cmd.generate:
+        sp = cmd.add_arg_parser(subparsers)
+        sp.set_defaults(action=cmd.run)
     options = parser.parse_args()
     return options.action(options)
-
-def fatal(message):
-    prog = os.path.basename(sys.argv[0])
-    print(
-        '{prog}: error: {msg}'.format(prog=prog, msg=message),
-        file=sys.stderr
-    )
-    sys.exit(1)
-
-def parse_pick(s):
-    if s is None:
-        return str
-    lst = []
-    for item in s.split(','):
-        if '-' in item:
-            l, r = (int(x, 10) for x in item.split('-', 1))
-        else:
-            l = r = int(item, 10)
-        if l < 1:
-            raise IndexError('index should be a positive integer: {idx}'.format(idx=l))
-        if l > r:
-            raise IndexError('empty range: {l} > {r}'.format(l=l, r=r))
-        lst += range(l - 1, r)
-    def pick_fn(p):
-        return ''.join(p[i] for i in lst)
-    return pick_fn
-
-xdg_data_home = os.environ.get('XDG_DATA_HOME') or ''
-if not os.path.isabs(xdg_data_home):
-    xdg_data_home = os.path.expanduser('~/.local/share')
-
-config_path = os.path.join(xdg_data_home, 'japama', 'secrets.gpg')
-
-def do_show(options):
-    '''
-    Show selected password(s).
-
-    Configuration is read from <$XDG_DATA_HOME/japama/secrets.gpg>,
-    an OpenPGP-encrypted file in the following format:
-
-       [https://example.net/]
-       user = j.r.hacker
-       password = PnlUbPkPtqZvy2Po
-
-       [https://example.org/]
-       user = jrh
-       password = cUUZ4oUXFv4Cs2A5
-
-       ...
-
-    '''
-    try:
-        pick_filter = parse_pick(options.pick)
-    except (IndexError, ValueError) as exc:
-        fatal('cannot parse --pick argument: {exc}'.format(exc=exc))
-    with open(config_path, 'rb') as fp:
-        gpg = ipc.Popen(['gpg', '-q', '-d'], stdin=fp, stdout=ipc.PIPE)
-    cp = configparser.RawConfigParser()
-    with io.TextIOWrapper(gpg.stdout, encoding='UTF-8') as fp:
-        cp.read_file(fp)
-    for site in cp.sections():
-        item = cp[site]
-        if options.keyword not in site:
-            continue
-        try:
-            password = item['password']
-        except KeyError:
-            continue
-        password = pick_filter(password)
-        user = item.get('user', '<none>')
-        xclip = None
-        if options.omit:
-            password = '<omitted>'
-        elif options.x_selection:
-            x_selection = options.x_selection
-            options.x_selection = None
-            options.omit = True
-            cmdline = ['xclip', '-selection', x_selection, '-l', '1', '-verbose']
-            xclip = ipc.Popen(cmdline,
-                stdin=ipc.PIPE,
-                stderr=ipc.DEVNULL,
-            )
-            xclip.stdin.write(password.encode('ASCII'))
-            xclip.stdin.close()
-            if x_selection == 'primary':
-                x_selection += '-selection'
-            password = '<in-x-{sel}>'.format(sel=x_selection)
-        print('{site} ({user}) {password}'.format(
-            site=site, user=user, password=password)
-        )
-        if xclip is not None:
-            if xclip.wait() != 0:
-                fatal('xclip failed')
-    if gpg.wait() != 0:
-        fatal('gpg failed')
-    gpg.stdout.close()
-
-def do_generate(options):
-    '''
-    Generate one or more passwords.
-
-    The passwords use ASCII letters (a-z, A-Z) and digits (0-9).
-    That is, they have
-       lg (26 + 26 + 10) = 5.95
-    bits of entropy per character.
-    '''
-    if options.count is None:
-        options.count = 1
-    alphabet = string.ascii_letters + string.digits
-    chunk_bits = math.log(len(alphabet), 2) * options.length
-    chunk_bits = int(math.ceil(chunk_bits))
-    sysrandom = random.SystemRandom()
-    for i in range(options.count):
-        while True:
-            bigint = sysrandom.getrandbits(chunk_bits)
-            if bigint < len(alphabet) ** options.length:
-                break
-        password = [None] * options.length
-        for j in range(options.length):
-            bigint, password[j] = divmod(bigint, len(alphabet))
-        assert bigint == 0
-        password = ''.join(alphabet[ch] for ch in password)
-        print(password)
 
 if __name__ == '__main__':
     main()
