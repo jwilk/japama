@@ -19,6 +19,7 @@ an OpenPGP-encrypted file in the following format:
 
 '''
 
+import argparse
 import configparser
 import io
 import subprocess as ipc
@@ -27,7 +28,11 @@ import lib.cli
 import lib.conf
 
 def add_arg_parser(subparsers):
-    ap = subparsers.add_parser('show', help='show selected password(s)', description=__doc__)
+    ap = subparsers.add_parser('show',
+        help='show selected password(s)',
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     group = ap.add_mutually_exclusive_group()
     group.add_argument('-x', '--x-selection',
         dest='x_selection', action='store_const', const='primary',

@@ -10,12 +10,17 @@ That is, they have
 bits of entropy per character.
 '''
 
+import argparse
 import math
 import random
 import string
 
 def add_arg_parser(subparsers):
-    ap = subparsers.add_parser('generate', help='generate passwords', description=__doc__)
+    ap = subparsers.add_parser('generate',
+        help='generate passwords',
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     ap.add_argument('--length', default=16, type=int, help='password length (default: 16)')
     ap.add_argument('count', metavar='COUNT', nargs='?', type=int, help='number of passwords to generate')
     return ap
