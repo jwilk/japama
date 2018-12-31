@@ -39,6 +39,7 @@ def add_arg_parser(subparsers):
         dest='x_selection', action='store_const', const='clipboard',
         help='copy the password X clipboard'
     )
+    ap.add_argument('--robot', action='store_true', help='use machine-readable output')
     ap.add_argument('keyword', metavar='KEYWORD')
     return ap
 
@@ -70,6 +71,11 @@ def run(options):
     cp = configparser.RawConfigParser()
     with io.TextIOWrapper(gpg.stdout, encoding='UTF-8') as fp:
         cp.read_file(fp)
+    if options.robot:
+        item = cp[options.keyword]
+        password = item['password']
+        print(password)
+        return
     for site in cp.sections():
         item = cp[site]
         if options.keyword not in site:
