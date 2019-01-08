@@ -29,14 +29,10 @@ def run(options):
     if options.count is None:
         options.count = 1
     alphabet = string.ascii_letters + string.digits
-    chunk_bits = math.log(len(alphabet), 2) * options.length
-    chunk_bits = int(math.ceil(chunk_bits))
+    limit = len(alphabet) ** options.length
     sysrandom = random.SystemRandom()
     for i in range(options.count):
-        while True:
-            bigint = sysrandom.getrandbits(chunk_bits)
-            if bigint < len(alphabet) ** options.length:
-                break
+        bigint = sysrandom.randrange(0, limit)
         password = [None] * options.length
         for j in range(options.length):
             bigint, password[j] = divmod(bigint, len(alphabet))
