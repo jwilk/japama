@@ -1,0 +1,71 @@
+Overview
+========
+
+.. code:: console
+
+   $ japama --help
+   usage: japama [-h] {show,generate} ...
+
+   positional arguments:
+     {show,generate}
+       show           show selected password(s)
+       generate       generate passwords
+
+   optional arguments:
+     -h, --help       show this help message and exit
+
+   $ japama show --help
+   usage: japama show [-h] [-x | --x-clipboard] [--omit | --pick N[,N...] | --robot] KEYWORD
+
+   Show selected password(s).
+
+   Configuration is read from <$XDG_DATA_HOME/japama/secrets.gpg>,
+   an OpenPGP-encrypted file in the following format:
+
+      [https://github.com/]
+      user = jwilk
+      password = PnlUbPkPtqZvy2Po
+      # optional for TOTP (RFC 6238) support:
+      totp-secret = wxq3cgfxn77x7g7k
+
+      ...
+
+   positional arguments:
+     KEYWORD
+
+   optional arguments:
+     -h, --help         show this help message and exit
+     -x, --x-selection  copy the password to X primary selection
+     --x-clipboard      copy the password to X clipboard
+     --omit             omit passwords
+     --pick N[,N...]    pick only some characters
+     --robot            use machine-readable output
+
+   $ japama generate --help
+   usage: japama generate [-h] [--length LENGTH] [COUNT]
+
+   Generate one or more passwords.
+
+   The passwords use ASCII letters (a-z, A-Z) and digits (0-9).
+   That is, they have
+      lg (26 + 26 + 10) = 5.95
+   bits of entropy per character.
+
+   positional arguments:
+     COUNT            number of passwords to generate
+
+   optional arguments:
+     -h, --help       show this help message and exit
+     --length LENGTH  password length (default: 16)
+
+Prerequisites
+=============
+
+* Python ≥ 3.3
+
+* PyYAML_
+
+.. _PyYAML:
+   https://pypi.org/project/PyYAML/
+
+.. vim:ts=3 sts=3 sw=3 et ft=rst
