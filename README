@@ -65,7 +65,12 @@ Prerequisites
 
 * PyYAML_
 
+* PyOTP_ (for TOTP support)
+
 .. _PyYAML:
    https://pypi.org/project/PyYAML/
+
+.. _PyOTP:
+   https://pypi.org/project/pyotp/
 
 .. vim:ts=3 sts=3 sw=3 et ft=rst
