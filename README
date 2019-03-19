@@ -67,10 +67,15 @@ Prerequisites
 
 * PyOTP_ (for TOTP support)
 
+* GnuPG_
+
 .. _PyYAML:
    https://pypi.org/project/PyYAML/
 
 .. _PyOTP:
    https://pypi.org/project/pyotp/
+
+.. _GnuPG:
+   https://www.gnupg.org/
 
 .. vim:ts=3 sts=3 sw=3 et ft=rst
