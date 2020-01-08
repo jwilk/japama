@@ -17,7 +17,7 @@ install:
 - python3 -m pip install pydiatra $pyflakes
 - python3 -m pip install pygments restructuredtext-lint
 script:
-- ./japama generate 3
+- prove -v
 - python3 -m pydiatra japama
 - python3 -m pyflakes japama
 - restructuredtext-lint --encoding=UTF-8 README
