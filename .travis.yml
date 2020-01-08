@@ -12,8 +12,10 @@ jobs:
 before_install:
 - pyflakes=pyflakes
 - if [[ $TRAVIS_PYTHON_VERSION = 3.3 ]]; then pyflakes='pyflakes<2'; fi
+- pyyaml=pyyaml
+- if [[ $TRAVIS_PYTHON_VERSION = 3.[34] ]]; then pyyaml='pyyaml<4'; fi
 install:
-- python3 -m pip install pyyaml
+- python3 -m pip install $pyyaml
 - python3 -m pip install pydiatra $pyflakes
 - python3 -m pip install pygments restructuredtext-lint
 script:
