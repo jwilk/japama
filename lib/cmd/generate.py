@@ -15,6 +15,8 @@ import math
 import random
 import string
 
+alphabet = string.ascii_letters + string.digits
+
 def add_arg_parser(subparsers):
     ap = subparsers.add_parser('generate',
         help='generate passwords',
@@ -28,7 +30,6 @@ def add_arg_parser(subparsers):
 def run(options):
     if options.count is None:
         options.count = 1
-    alphabet = string.ascii_letters + string.digits
     limit = len(alphabet) ** options.length
     sysrandom = random.SystemRandom()
     for i in range(options.count):
