@@ -110,7 +110,6 @@ def run(options):
             continue
         password = pick_filter(password)
         user = item.get('user', '<none>')
-        xclip = None
         print('[', site, ']', sep='')
         print('user', '=', user)
         if options.omit:
