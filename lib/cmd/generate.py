@@ -23,7 +23,12 @@ def add_arg_parser(subparsers):
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
+    class set_bits(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            length = values * math.log(2, len(alphabet))
+            namespace.length = int(math.ceil(length))
     ap.add_argument('--length', default=16, type=int, help='password length (default: 16)')
+    ap.add_argument('--bits', type=int, help='password entropy', action=set_bits)
     ap.add_argument('count', metavar='COUNT', nargs='?', type=int, help='number of passwords to generate')
     return ap
 
