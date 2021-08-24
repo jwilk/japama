@@ -1,4 +1,4 @@
-# Copyright © 2013-2018 Jakub Wilk <jwilk@jwilk.net>
+# Copyright © 2013-2021 Jakub Wilk <jwilk@jwilk.net>
 # SPDX-License-Identifier: MIT
 
 import os
