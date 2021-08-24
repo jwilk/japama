@@ -7,7 +7,7 @@ import sys
 def fatal(message):
     prog = os.path.basename(sys.argv[0])
     print(
-        '{prog}: error: {msg}'.format(prog=prog, msg=message),
+        f'{prog}: error: {message}',
         file=sys.stderr
     )
     sys.exit(1)

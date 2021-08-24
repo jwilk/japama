@@ -57,9 +57,9 @@ def parse_pick(s):
         else:
             l = r = int(item, 10)
         if l < 1:
-            raise IndexError('index should be a positive integer: {idx}'.format(idx=l))
+            raise IndexError(f'index should be a positive integer: {l}')
         if l > r:
-            raise IndexError('empty range: {l} > {r}'.format(l=l, r=r))
+            raise IndexError(f'empty range: {l} > {r}')
         lst += range(l - 1, r)
     def pick_fn(p):
         return ''.join(p[i] for i in lst)
@@ -86,7 +86,7 @@ def run(options):
     try:
         pick_filter = parse_pick(options.pick)
     except (IndexError, ValueError) as exc:
-        lib.cli.fatal('cannot parse --pick argument: {exc}'.format(exc=exc))
+        lib.cli.fatal(f'cannot parse --pick argument: {exc}')
     with open(lib.conf.path, 'rb') as fp:
         gpg = ipc.Popen(['gpg', '-q', '-d'], stdin=fp, stdout=ipc.PIPE)
     cp = configparser.RawConfigParser()
@@ -121,7 +121,7 @@ def run(options):
             options.omit = True
             if x_selection == 'primary':
                 x_selection += '-selection'
-            password = '<in-x-{sel}>'.format(sel=x_selection)
+            password = f'<in-x-{x_selection}>'
         print('password', '=', password)
         if x_selection:
             run_xclip(x_selection, orig_password)
@@ -129,7 +129,7 @@ def run(options):
         if totp_secret:
             password = orig_password = get_totp(totp_secret)
             if x_selection:
-                password = '<in-x-{sel}>'.format(sel=x_selection)
+                password = f'<in-x-{x_selection}>'
             print('otp', '=', password)
             if x_selection:
                 run_xclip(x_selection, orig_password)
