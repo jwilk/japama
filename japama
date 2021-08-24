@@ -6,18 +6,26 @@
 
 import argparse
 import signal
+import sys
 
 import lib.cmd.show
 import lib.cmd.generate
 
+def fix_arg_parser(ap):
+    if sys.version_info < (3, 10):
+        # https://bugs.python.org/issue9694
+        ap._optionals.title = 'options'
+
 def main():
     parser = argparse.ArgumentParser()
+    fix_arg_parser(parser)
     subparsers = parser.add_subparsers()
     subparsers.dest = 'COMMAND'  # https://bugs.python.org/issue9253
     subparsers.required = True
     for cmd in lib.cmd.show, lib.cmd.generate:
         sp = cmd.add_arg_parser(subparsers)
         sp.set_defaults(action=cmd.run)
+        fix_arg_parser(sp)
     options = parser.parse_args()
     signal.signal(signal.SIGPIPE, signal.SIG_DFL)
     return options.action(options)

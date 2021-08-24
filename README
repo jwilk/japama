@@ -11,7 +11,7 @@ Overview
        show           show selected password(s)
        generate       generate passwords
 
-   optional arguments:
+   options:
      -h, --help       show this help message and exit
 
    $ japama show --help
@@ -33,7 +33,7 @@ Overview
    positional arguments:
      KEYWORD
 
-   optional arguments:
+   options:
      -h, --help         show this help message and exit
      -x, --x-selection  copy the password to X primary selection
      --x-clipboard      copy the password to X clipboard
@@ -54,7 +54,7 @@ Overview
    positional arguments:
      COUNT            number of passwords to generate
 
-   optional arguments:
+   options:
      -h, --help       show this help message and exit
      --length LENGTH  password length (default: 16)
 
