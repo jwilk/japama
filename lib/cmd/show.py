@@ -100,6 +100,7 @@ def run(options):
         password = item['password']
         print(password)
         return
+    omit_next = False
     for site in cp.sections():
         item = cp[site]
         if options.keyword not in site:
@@ -117,8 +118,7 @@ def run(options):
         x_selection = None
         if options.x_selection:
             x_selection = options.x_selection
-            options.x_selection = None
-            options.omit = True
+            omit_next = True
             if x_selection == 'primary':
                 x_selection += '-selection'
             password = f'<in-x-{x_selection}>'
@@ -127,13 +127,20 @@ def run(options):
             run_xclip(x_selection, orig_password)
         totp_secret = item.get('totp-secret')
         if totp_secret:
-            password = orig_password = get_totp(totp_secret)
+            if options.omit:
+                password = '<omitted>'
+            else:
+                password = orig_password = get_totp(totp_secret)
             if x_selection:
                 password = f'<in-x-{x_selection}>'
             print('otp', '=', password)
             if x_selection:
                 run_xclip(x_selection, orig_password)
+                omit_next = True
         print()
+        if omit_next:
+            options.x_selection = None
+            options.omit = True
 
 __all__ = [
     'add_arg_parser',
