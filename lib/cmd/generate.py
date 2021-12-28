@@ -12,7 +12,7 @@ bits of entropy per character.
 
 import argparse
 import math
-import random
+import secrets
 import string
 
 alphabet = string.ascii_letters + string.digits
@@ -36,9 +36,8 @@ def run(options):
     if options.count is None:
         options.count = 1
     limit = len(alphabet) ** options.length
-    sysrandom = random.SystemRandom()
     for i in range(options.count):
-        bigint = sysrandom.randrange(0, limit)
+        bigint = secrets.randbelow(limit)
         password = [None] * options.length
         for j in range(options.length):
             bigint, password[j] = divmod(bigint, len(alphabet))
