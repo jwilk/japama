@@ -96,11 +96,19 @@ def run(options):
         lib.cli.fatal('gpg failed')
     gpg.stdout.close()
     if options.robot:
-        item = cp[options.keyword]
-        password = item['password']
+        kwd = options.keyword
+        try:
+            item = cp[kwd]
+        except KeyError:
+            lib.cli.fatal(f'no such entry: {kwd!r}')
+        try:
+            password = item['password']
+        except KeyError:
+            lib.cli.fatal(f'no password for entry {kwd!r}')
         print(password)
         return
     omit_next = False
+    password = None
     for site in cp.sections():
         item = cp[site]
         if options.keyword not in site:
@@ -141,6 +149,8 @@ def run(options):
         if omit_next:
             options.x_selection = None
             options.omit = True
+    if password is None:
+        lib.cli.fatal('no matching passwords')
 
 __all__ = [
     'add_arg_parser',
