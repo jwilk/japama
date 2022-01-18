@@ -42,7 +42,7 @@ Overview
      --robot            use machine-readable output
 
    $ japama generate --help
-   usage: japama generate [-h] [--length LENGTH] [COUNT]
+   usage: japama generate [-h] [--length LENGTH] [--bits BITS] [COUNT]
 
    Generate one or more passwords.
 
@@ -57,6 +57,7 @@ Overview
    options:
      -h, --help       show this help message and exit
      --length LENGTH  password length (default: 16)
+     --bits BITS      password entropy
 
 Prerequisites
 =============
