@@ -28,11 +28,11 @@ jobs:
     - name: run pydiatra
       run: |
         python3 -m pip install --user pydiatra
-        python3 -m pydiatra -v japama lib
+        python3 -m pydiatra -v .
     - name: run pyflakes
       run: |
         python3 -m pip install --user pyflakes
-        python3 -m pyflakes japama lib
+        python3 -m pyflakes .
     - name: check README syntax
       run: |
         python3 -m pip install --user pygments restructuredtext-lint
