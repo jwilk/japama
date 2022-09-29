@@ -53,9 +53,9 @@ def parse_pick(s):
     lst = []
     for item in s.split(','):
         if '-' in item:
-            l, r = (int(x, 10) for x in item.split('-', 1))
+            l, r = (int(x) for x in item.split('-', 1))
         else:
-            l = r = int(item, 10)
+            l = r = int(item)
         if l < 1:
             raise IndexError(f'index should be a positive integer: {l}')
         if l > r:
