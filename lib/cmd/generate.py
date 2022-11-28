@@ -42,7 +42,7 @@ def run(options):
         for j in range(options.length):
             bigint, password[j] = divmod(bigint, len(alphabet))
         assert bigint == 0
-        password = ''.join(alphabet[ch] for ch in password)
+        password = str.join('', (alphabet[ch] for ch in password))
         print(password)
 
 __all__ = [

@@ -62,7 +62,7 @@ def parse_pick(s):
             raise IndexError(f'empty range: {l} > {r}')
         lst += range(l - 1, r)
     def pick_fn(p):
-        return ''.join(p[i] for i in lst)
+        return str.join('', (p[i] for i in lst))
     return pick_fn
 
 def run_xclip(x_selection, content):
