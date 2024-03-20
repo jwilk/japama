@@ -8,8 +8,8 @@ import argparse
 import signal
 import sys
 
-import lib.cmd.show
 import lib.cmd.generate
+import lib.cmd.show
 
 def fix_arg_parser(ap):
     if sys.version_info < (3, 10):
