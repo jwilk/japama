@@ -17,16 +17,16 @@ def fix_arg_parser(ap):
         ap._optionals.title = 'options'
 
 def main():
-    parser = argparse.ArgumentParser()
-    fix_arg_parser(parser)
-    subparsers = parser.add_subparsers()
+    ap = argparse.ArgumentParser()
+    fix_arg_parser(ap)
+    subparsers = ap.add_subparsers()
     subparsers.dest = 'COMMAND'  # https://bugs.python.org/issue9253
     subparsers.required = True
     for cmd in lib.cmd.show, lib.cmd.generate:
         sp = cmd.add_arg_parser(subparsers)
         sp.set_defaults(action=cmd.run)
         fix_arg_parser(sp)
-    options = parser.parse_args()
+    options = ap.parse_args()
     signal.signal(signal.SIGPIPE, signal.SIG_DFL)
     return options.action(options)
 
