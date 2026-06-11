@@ -20,9 +20,7 @@ def main():
     ap = argparse.ArgumentParser()
     fix_arg_parser(ap)
     ap.color = False
-    subparsers = ap.add_subparsers()
-    subparsers.dest = 'COMMAND'  # https://bugs.python.org/issue9253
-    subparsers.required = True
+    subparsers = ap.add_subparsers(required=True, dest='COMMAND')
     for cmd in lib.cmd.show, lib.cmd.generate:
         sp = cmd.add_arg_parser(subparsers)
         sp.set_defaults(action=cmd.run)
